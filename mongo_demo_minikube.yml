@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: mongodemo
+  name: mongodemo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      io.kompose.service: mongodemo
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: mongodemo
+    spec:
+      containers:
+      - image: csdavidg/mongo_demo:0.0.1-SNAPSHOT
+        imagePullPolicy: Never
+        name: mongo-demo
+        ports:
+        - name: mongodemoport
+          containerPort: 8080
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

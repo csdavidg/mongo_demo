@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    io.kompose.service: mongo
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mongo
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: mongo
+    spec:
+      containers:
+      - image: mongo:4
+        imagePullPolicy: ""
+        name: mongo-container
+        ports:
+        - name: mongoport
+          containerPort: 27017
+          protocol: TCP
+        resources: {}
+      - env:
+        - name: ME_CONFIG_MONGODB_SERVER
+          value: localhost
+        image: mongo-express:0.54
+        imagePullPolicy: ""
+        name: mongo-express
+        ports:
+        - name: mongoexport
+          containerPort: 8081
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  labels:
+    io.kompose.service: mongo
+  name: mongo
+spec:
+  type: NodePort
+  ports:
+  - name: mongonp
+    port: 27017
+    targetPort: mongoport
+    nodePort: 30017
+  - name: mongoexnp
+    port: 8088
+    targetPort: mongoexport
+    nodePort: 30088
+  selector:
+    io.kompose.service: mongo
+status:
+  loadBalancer: {}
